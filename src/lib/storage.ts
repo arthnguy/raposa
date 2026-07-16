@@ -8,6 +8,32 @@ export async function setChallengeDuration(duration: number): Promise<void> {
   await browser.storage.local.set({ duration: duration });
 }
 
+export async function getActiveDeckId(): Promise<string | null> {
+  const result = await browser.storage.local.get("activeDeckId");
+  return (result.activeDeckId as string | undefined) ?? null;
+}
+
+export async function getActiveDeck(): Promise<Deck | null> {
+  const activeId: string = await browser.storage.local.get("activeDeckId");
+  const decks = await getAllDecks();
+
+  if (!activeId || !decks) {
+    return null;
+  }
+
+  const result = decks.find((deck) => deck.id === activeId);
+
+  if (result !== undefined) {
+    return result;
+  } else {
+    return null;
+  }
+}
+ 
+export async function setActiveDeckId(deckId: string): Promise<void> {
+  await browser.storage.local.set({ activeDeckId: deckId });
+}
+
 export async function getAllDecks(): Promise<Deck[]> {
   const result = await browser.storage.local.get("decks");
   return (result.decks as Deck[] | undefined) ?? [];
