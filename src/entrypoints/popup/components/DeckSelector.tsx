@@ -1,35 +1,13 @@
-import { useState, useEffect } from "react";
-import { getAllDecks, getActiveDeckId, setActiveDeckId } from "@/lib/storage";
+import { useState } from "react";
+import { setActiveDeckId } from "@/lib/storage";
 import type { Deck } from "@/types/deck";
 
-export default function DeckSelector() {
-  const [decks, setDecks] = useState<Deck[]>([]);
+interface DeckSelectorProps {
+  decks: Deck[],
+}
+
+export default function DeckSelector({ decks }: DeckSelectorProps) {
   const [activeDeckId, setActiveDeckIdState] = useState<string>("");
-
-  useEffect(() => {
-    const loadFromStorage = async () => {
-      const [allDecks, storedActiveId] = await Promise.all([
-        getAllDecks(),
-        getActiveDeckId(),
-      ]);
-      setDecks(allDecks);
-      setActiveDeckIdState(storedActiveId ?? "");
-    };
-
-    loadFromStorage();
-
-    const handleStorageChange = (
-      changes: Record<string, { oldValue?: unknown; newValue?: unknown }>,
-      areaName: string
-    ) => {
-      if (areaName === "local" && "decks" in changes) {
-        loadFromStorage();
-      }
-    };
-
-    browser.storage.onChanged.addListener(handleStorageChange);
-    return () => browser.storage.onChanged.removeListener(handleStorageChange);
-  }, []);
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = e.target.value;
@@ -42,18 +20,22 @@ export default function DeckSelector() {
       <span className="text-sm font-sans text-text-secondary">
         Current deck:
       </span>
-      <select
-        value={activeDeckId}
-        onChange={handleChange}
-        className="font-sans text-accent"
-      >
-        <option value="">None</option>
-        {decks.map((deck) => (
-          <option key={deck.id} value={deck.id}>
-            {deck.name}
-          </option>
-        ))}
-      </select>
+      {
+        decks.length !== 0 ?
+        <select
+          value={activeDeckId}
+          onChange={handleChange}
+          className="font-sans text-accent"
+        >
+          {decks.map((deck) => (
+            <option key={deck.id} value={deck.id}>
+              {deck.name}
+            </option>
+          ))}
+        </select>
+        :
+        <p className="font-sans text-accent">None</p>
+      }
     </div>
   );
 }

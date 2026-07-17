@@ -1,7 +1,7 @@
 import { Flashcard, Deck } from "@/types/deck";
 
 export async function setTimeBetweenChallenges(time: number): Promise<void> {
-  await browser.storage.local.set({cooldown: { timeBetweenChallenges: time }});
+  await browser.storage.local.set({ cooldown: { timeBetweenChallenges: time } });
 }
 
 export async function setChallengeDuration(duration: number): Promise<void> {
@@ -21,13 +21,7 @@ export async function getActiveDeck(): Promise<Deck | null> {
     return null;
   }
 
-  const result = decks.find((deck) => deck.id === activeId);
-
-  if (result !== undefined) {
-    return result;
-  } else {
-    return null;
-  }
+  return decks.find((deck) => deck.id === activeId) ?? null;
 }
  
 export async function setActiveDeckId(deckId: string): Promise<void> {
@@ -51,8 +45,14 @@ export async function deleteDeck(deckId: string) {
   const decks = (result.decks as Deck[] | undefined) ?? [];
 
   const updatedDecks = decks.filter((deck) => deck.id !== deckId);
-
   await browser.storage.local.set({ decks: updatedDecks });
+
+  // Handle dangling ID
+  if (updatedDecks.length !== 0) {
+    await setActiveDeckId(updatedDecks[0].id);
+  } else {
+    await setActiveDeckId("");
+  }
 }
 
 export async function addFlashcardToDeck(

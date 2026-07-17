@@ -1,6 +1,6 @@
 export default defineBackground(() => {
   browser.runtime.onInstalled.addListener(() => {
-    browser.alarms.create("translation-prompt", { periodInMinutes: 1 });
+    browser.alarms.create("translation-prompt", { periodInMinutes: 30 });
   });
 
   browser.alarms.onAlarm.addListener(async (alarm) => {
@@ -10,6 +10,7 @@ export default defineBackground(() => {
         currentWindow: true,
       });
       const tab = tabs[0];
+
       if (tab?.id) {
         await browser.tabs.sendMessage(tab.id, "show-overlay");
       }

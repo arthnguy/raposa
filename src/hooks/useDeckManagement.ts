@@ -98,6 +98,17 @@ export function useDeckManagement() {
   const handleCreateDeck = async (name: string) => {
     const newDeck = createDeck(name);
 
+    const resetChallengeTimer = async () => {
+      const alarm = await browser.alarms.get("translation-prompt");
+      if (alarm) {
+        await browser.alarms.create("translation-prompt", { periodInMinutes: alarm.periodInMinutes });
+      }
+    };
+
+    if (decks.length === 0) {
+      resetChallengeTimer();
+    }
+
     setDecks((prev) => [...prev, newDeck]);
     setCurrentDeckId(newDeck.id);
     setIsCreatingDeck(false);
