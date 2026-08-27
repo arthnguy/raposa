@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+@theme {
+  --font-sans: "DM Sans", "Noto Sans SC", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-border: #334155;
+  --color-text-primary: #f8fafc;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-accent: #38bdf8;
+  --color-danger: #e7000b;
+  --color-success: #4ade80;
+}
+
+* {
+  outline: none;
+}
