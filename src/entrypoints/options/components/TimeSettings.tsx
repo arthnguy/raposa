@@ -41,7 +41,10 @@ export default function TimeSettings() {
 
 	useEffect(() => {
 		(async () => {
-			setSystem(await getSystem());
+			const result = await getSystem()
+			setSystem(result);
+			setTimeBetween(result.timeBetweenChallenges);
+			setChallengeDuration(result.challengeDuration);
 		})();
 	}, []);
 
