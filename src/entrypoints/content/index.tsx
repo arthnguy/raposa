@@ -1,23 +1,47 @@
 import ReactDOM from "react-dom/client";
-//import TranslationOverlay from "@/entrypoints/content/components/TranslationOverlay";
+import ChallengeOverlay from "@/entrypoints/content/components/ChallengeOverlay";
 import "@/assets/tailwind.css";
 
 export default defineContentScript({
-  matches: ["<all_urls>"],
-  cssInjectionMode: "ui",
-  async main(ctx) {
-    const ui = await createShadowRootUi(ctx, {
-      name: "translation-overlay",
-      position: "overlay",
-      onMount(container) {
-        const root = ReactDOM.createRoot(container);
-        //root.render(<TranslationOverlay onDismiss={() => ui.remove()} />);
-      },
-    });
-    ui.mount();
-    browser.runtime.onMessage.addListener(async (message) => {
-      if (message === "show-overlay") {
-      }
-    });
-  },
+	matches: ["<all_urls>"],
+	cssInjectionMode: "ui",
+	async main(ctx) {
+		let ui: Awaited<ReturnType<typeof createShadowRootUi>> | null = null;
+		let root: ReturnType<typeof ReactDOM.createRoot> | null = null;
+
+		const showOverlay = async () => {
+			if (ui) { // Duplicate render check
+				return;
+			}
+
+			ui = await createShadowRootUi(ctx, {
+				name: "translation-overlay",
+				position: "overlay",
+				onMount(container) {
+					root = ReactDOM.createRoot(container);
+					root.render(
+						<ChallengeOverlay
+							onDismiss={async () => {
+								ui?.remove();
+								ui = null;
+								await browser.runtime.sendMessage("challenge-dismissed");
+							}}
+						/>
+					);
+				},
+				onRemove() {
+					root?.unmount();
+					root = null;
+				},
+			});
+
+			ui.mount();
+		};
+
+		browser.runtime.onMessage.addListener((message) => {
+			if (message === "show-overlay") {
+				showOverlay();
+			}
+		});
+	},
 });

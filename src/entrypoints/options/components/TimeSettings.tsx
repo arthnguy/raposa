@@ -1,21 +1,12 @@
 import { getSystem, updateSystem } from "@/lib/storage";
-import type { System } from "@/types/system";
-import { useState } from "react";
-
-const CHALLENGE_ALARM_NAME = "translation-prompt";
+import { CHALLENGE_ALARM_NAME } from "@/lib/timer";
+import { useState, useEffect } from "react";
 
 function NumberSetting({
-	label,
-	unit,
-	value,
-	onChange,
-	onCommit,
+	label, unit, value, onChange, onCommit,
 }: {
-	label: string;
-	unit: string;
-	value: number;
-	onChange: (value: number) => void;
-	onCommit: () => void;
+	label: string; unit: string; value: number;
+	onChange: (value: number) => void; onCommit: () => void;
 }) {
 	return (
 		<div className="flex items-center justify-between">
@@ -37,69 +28,59 @@ function NumberSetting({
 export default function TimeSettings() {
 	const [timeBetween, setTimeBetween] = useState<number | null>(null);
 	const [challengeDuration, setChallengeDuration] = useState<number | null>(null);
-	const [system, setSystem] = useState<System | null>(null);
 
 	useEffect(() => {
 		(async () => {
-			const result = await getSystem()
-			setSystem(result);
+			const result = await getSystem();
 			setTimeBetween(result.timeBetweenChallenges);
 			setChallengeDuration(result.challengeDuration);
 		})();
 	}, []);
 
-	async function handleUpdateTime() {
+	async function handleUpdateTimeBetween() {
 		if (timeBetween === null) {
 			return;
 		}
 
-		const alarm = await browser.alarms.get(CHALLENGE_ALARM_NAME);
-		if (alarm?.periodInMinutes === timeBetween) {
+		const system = await getSystem();
+		if (system.timeBetweenChallenges === timeBetween) {
 			return;
 		}
 
-		updateSystem({ timeBetweenChallenges: timeBetween });
-		await browser.alarms.create(CHALLENGE_ALARM_NAME, {
-			periodInMinutes: timeBetween,
-		});
+		await updateSystem({ timeBetweenChallenges: timeBetween });
+
+		if (!system.isCurrentlyTranslating) {
+			await browser.alarms.create(CHALLENGE_ALARM_NAME, { periodInMinutes: timeBetween });
+		}
+	}
+
+	// Challenge duration has nothing to do with the recurring alarm - just save it.
+	async function handleUpdateChallengeDuration() {
+		if (challengeDuration === null) {
+			return;
+		}
+		await updateSystem({ challengeDuration });
 	}
 
 	return (
 		<section>
-			<h2 className="text-sm font-medium text-text-secondary mb-4">
-				Time settings
-			</h2>
+			<h2 className="text-sm font-medium text-text-secondary mb-4">Time settings</h2>
 
-			{
-				timeBetween && 
+			{timeBetween !== null &&
 				<div className="mb-4">
 					<NumberSetting
-						label="Time between challenges"
-						unit="minutes"
-						value={timeBetween}
-						onChange={setTimeBetween}
-						onCommit={() => {
-							handleUpdateTime();
-
-							// TODO
-							if (!system?.isCurrentlyTranslating) {
-								
-							} else {
-
-							}
-						}}
+						label="Time between challenges" unit="minutes"
+						value={timeBetween} onChange={setTimeBetween}
+						onCommit={handleUpdateTimeBetween}
 					/>
 				</div>
 			}
 
-			{
-				challengeDuration &&
+			{challengeDuration !== null &&
 				<NumberSetting
-					label="Challenge duration"
-					unit="seconds"
-					value={challengeDuration}
-					onChange={setChallengeDuration}
-					onCommit={handleUpdateTime}
+					label="Challenge duration" unit="seconds"
+					value={challengeDuration} onChange={setChallengeDuration}
+					onCommit={handleUpdateChallengeDuration}
 				/>
 			}
 		</section>

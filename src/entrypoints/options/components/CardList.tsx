@@ -2,7 +2,7 @@ import Card from "@/entrypoints/options/components/Card";
 import CardCreation from "@/entrypoints/options/components/CardCreation";
 import type { Card as CardType } from "@/types/deck";
 import { useEffect, useState } from "react";
-import { addCard, deleteCard, getCardsInDeck, updateCard } from "@/lib/storage";
+import { addCard, deleteCard, getCardsInDeck, updateCard, updateDeck } from "@/lib/storage";
 import { createCard } from "@/utils/factories";
 import { Plus } from "lucide-react";
 
@@ -34,6 +34,7 @@ export default function CardList({ deckId, searchQuery, isFavoritesOnly }: {
 
         try {
             await deleteCard(card.id);
+            await updateDeck(card.parentDeckId, { cardCount: cards.length - 1 });
         } catch (err) {
             setCards(prev); // Rollback
         }
@@ -64,6 +65,7 @@ export default function CardList({ deckId, searchQuery, isFavoritesOnly }: {
 
         try {
             await addCard(card);
+            await updateDeck(card.parentDeckId, { cardCount: cards.length + 1 });
         } catch (err) {
             setCards(prev); // Rollback
         }

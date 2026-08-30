@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import type { Deck } from "@/types/deck"
-import { addDeck, deleteDeck } from "@/lib/storage"
+import { addDeck, deleteDeck, getAllDecks } from "@/lib/storage"
 import { createDeck } from "@/utils/factories"
 import DeckManager from "@/entrypoints/options/components/DeckManager"
 import DeckSearch from "@/entrypoints/options/components/DeckSearch"
@@ -66,7 +66,7 @@ export default function DeckSettings() {
             </h2>
 
             <div className="flex gap-4 mb-4">
-                <div className="w-1/3">
+                <div className="w-1/3 min-w-0">
                     <DeckManager 
                         decks={decks}
                         currDeck={currDeck}
@@ -77,7 +77,7 @@ export default function DeckSettings() {
                     />
                 </div>
                 {!isCreatingDeck && (
-                    <div className="w-2/3">
+                    <div className="w-2/3 min-w-0">
                         <DeckSearch 
                             searchQuery={searchQuery} 
                             setSearchQuery={setSearchQuery} 

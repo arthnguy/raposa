@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const MAX_LENGTH = 250;
+
 export default function CardCreation({
 	onConfirm,
 	onCancel,
@@ -12,41 +14,53 @@ export default function CardCreation({
 
 	const handleConfirm = async (): Promise<void> => {
 		if (!front.trim() || !back.trim()) {
-            return;
-        }
-        
+			return;
+		}
+
 		await onConfirm(front, back);
 		setFront("");
 		setBack("");
 	};
 
 	return (
-		<div className="absolute right-0 top-full mt-2 z-10 w-72 bg-surface border border-border rounded-lg p-3 shadow-lg flex flex-col gap-2">
-			<textarea
-				value={front}
-				onChange={(e) => setFront(e.target.value)}
-				placeholder="Front"
-				autoFocus
-				rows={2}
-				className="resize-none w-full bg-background border border-border rounded-lg px-2 py-1 text-sm text-text-primary focus:outline-none focus:border-accent"
-			/>
-			<textarea
-				value={back}
-				onChange={(e) => setBack(e.target.value)}
-				placeholder="Back"
-				rows={2}
-				className="resize-none w-full bg-background border border-border rounded-lg px-2 py-1 text-sm text-text-secondary focus:outline-none focus:border-accent"
-			/>
-			<div className="flex justify-end gap-2 mt-1">
+		<div className="absolute right-0 top-full z-10 mt-2 flex w-72 flex-col gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg">
+			<div className="relative">
+				<textarea
+					value={front}
+					onChange={(e) => setFront(e.target.value)}
+					placeholder="Front"
+					autoFocus
+					maxLength={MAX_LENGTH}
+					className="w-full resize-none rounded-lg border border-border bg-background px-2 py-1 text-sm text-text-primary focus:border-accent focus:outline-none"
+				/>
+				<span className="pointer-events-none absolute bottom-1 right-2 text-[10px] text-text-muted">
+					{front.length}/{MAX_LENGTH}
+				</span>
+			</div>
+
+			<div className="relative">
+				<textarea
+					value={back}
+					onChange={(e) => setBack(e.target.value)}
+					placeholder="Back"
+					maxLength={MAX_LENGTH}
+					className="w-full resize-none rounded-lg border border-border bg-background px-2 py-1 text-sm text-text-secondary focus:border-accent focus:outline-none"
+				/>
+				<span className="pointer-events-none absolute bottom-1 right-2 text-[10px] text-text-muted">
+					{back.length}/{MAX_LENGTH}
+				</span>
+			</div>
+
+			<div className="mt-1 flex justify-end gap-2">
 				<button
 					onClick={onCancel}
-					className="cursor-pointer text-xs text-text-muted hover:text-text-primary px-2 py-1"
+					className="cursor-pointer px-2 py-1 text-xs text-text-muted hover:text-text-primary"
 				>
 					Cancel
 				</button>
 				<button
 					onClick={handleConfirm}
-					className="cursor-pointer text-xs text-background bg-accent rounded-lg px-3 py-1 hover:opacity-90"
+					className="cursor-pointer rounded-lg bg-accent px-3 py-1 text-xs text-background hover:opacity-90"
 				>
 					Add
 				</button>
