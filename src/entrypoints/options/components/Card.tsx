@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Pencil, Check, Star, Trash2 } from "lucide-react";
 import type { Card as CardType } from "@/types/deck";
 
@@ -16,33 +16,50 @@ function Content({
 	setBack: (value: string) => void,
 }) {
 	// Chrome 123+ only
-	const GROW_STYLE = { fieldSizing: "content" } as React.CSSProperties;
+	const GROW_STYLE = { fieldSizing: "content" } as CSSProperties;
+	const MAX_LENGTH = 250;
 
 	return (
 		<>
 			{isEditing ? (
-				<textarea
-					value={front}
-					onChange={(e) => setFront(e.target.value)}
-					style={GROW_STYLE}
-					className="resize-none w-full bg-background border border-border rounded-lg px-2 py-1 text-sm text-text-primary focus:outline-none focus:border-accent"
-				/>
+				<div className="relative min-w-0">
+					<textarea
+						value={front}
+						maxLength={MAX_LENGTH}
+						onChange={(e) => setFront(e.target.value)}
+						style={GROW_STYLE}
+						className="w-full pb-5 min-w-0 resize-none wrap-break-word rounded-lg border border-border bg-background px-2 py-1 text-sm text-text-primary focus:border-accent focus:outline-none"
+					/>
+					<span className="pointer-events-none absolute bottom-2 right-3 text-xs text-gray-400">
+						{front.length}/{MAX_LENGTH}
+					</span>
+				</div>
 			) : (
-				<span className="block min-w-0 wrap-break-word text-sm text-text-primary">{front}</span>
+				<span className="block min-w-0 wrap-break-word text-sm text-text-primary">
+					{front}
+				</span>
 			)}
 
 			{isEditing ? (
-				<textarea
-					value={back}
-					onChange={(e) => setBack(e.target.value)}
-					style={GROW_STYLE}
-					className="resize-none w-full bg-background border border-border rounded-lg px-2 py-1 text-sm text-text-secondary focus:outline-none focus:border-accent"
-				/>
+				<div className="relative min-w-0">
+					<textarea
+						value={back}
+						maxLength={MAX_LENGTH}
+						onChange={(e) => setBack(e.target.value)}
+						style={GROW_STYLE}
+						className="w-full pb-5 min-w-0 resize-none wrap-break-word rounded-lg border border-border bg-background px-2 py-1 text-sm text-text-secondary focus:border-accent focus:outline-none"
+					/>
+					<span className="pointer-events-none absolute bottom-2 right-3 text-xs text-gray-400">
+						{back.length}/{MAX_LENGTH}
+					</span>
+				</div>
 			) : (
-				<span className="block min-w-0 wrap-break-word text-sm text-text-secondary">{back}</span>
+				<span className="block min-w-0  wrap-break-word text-sm text-text-secondary">
+					{back}
+				</span>
 			)}
 		</>
-	)
+	);
 }
 
 function Delete({

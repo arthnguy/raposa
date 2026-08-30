@@ -33,7 +33,7 @@ function DeckSelection({
         <select
             value={isCreatingDeck ? CREATE_NEW_DECK : currDeckId}
             onChange={(e) => handleChange(e.target.value)}
-            className="flex-1 bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-accent"
+            className="flex-1 min-w-0 bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-accent truncate"
         >
             <option value="" disabled>
                 Select a deck
@@ -101,12 +101,12 @@ export default function DeckManager({
 
     return (
         <div className="flex gap-4 mb-4">
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
                 <label className="block text-xs text-text-muted mb-1.5">
                     Current deck
                 </label>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 min-w-0">
                     <DeckSelection
                         decks={decks}
                         currDeckId={currDeck?.id ?? ""}
