@@ -10,6 +10,8 @@ export default defineConfig({
   },
   manifest: {
     permissions: ["alarms", "tabs", "storage"],
+    name: "Raposa",
+    description: "Language learning assistant that presents you with cards periodically while browsing."
   },
   imports: {
     dirs: ["lib"],
