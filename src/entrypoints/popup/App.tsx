@@ -9,7 +9,7 @@ import type { Deck } from "@/types/deck";
 function App() {
 	const [availableDecks, setAvailableDecks] = useState<Deck[]>([]);
 	const [activeDeckId, setActiveDeckId] = useState<string>("");
-	const [isEnabled, setIsEnabled] = useState(true);
+	const [isEnabled, setIsEnabled] = useState<boolean | null>(null);
 
 	useEffect(() => {
 		(async () => {
@@ -24,6 +24,10 @@ function App() {
 	const canChallenge = !!activeDeck && activeDeck.cardCount > 0;
 
 	const handleToggle = async () => {
+		if (isEnabled === null) {
+			return;
+		}
+		
 		const next = !isEnabled;
 		setIsEnabled(next);
 		await updateSystem({ isEnabled: next });
@@ -33,7 +37,7 @@ function App() {
 		<div className="w-60 p-2 bg-background text-text-primary">
 			<div className="flex flex-col items-center gap-2">
 				<div className="bg-surface rounded-lg px-4 py-3">
-					<Timer canChallenge={canChallenge} isEnabled={isEnabled} />
+					<Timer canChallenge={canChallenge} isEnabled={!!isEnabled} />
 				</div>
 				<DeckSelector
 					decks={availableDecks}
@@ -45,11 +49,11 @@ function App() {
 			<hr className="border-t border-border my-3" />
 
 			<div className="flex justify-between items-center">
-				<Toggle
-					isOn={isEnabled}
-					onToggle={handleToggle}
-					label="Toggle timer"
-				/>
+				{isEnabled !== null ? (
+					<Toggle isOn={isEnabled} onToggle={handleToggle} label="Toggle timer" />
+				) : (
+					<div className="h-6 w-11" />
+				)}
 				<Settings
 					size={20}
 					className="text-text-secondary hover:text-accent cursor-pointer transition-colors"
