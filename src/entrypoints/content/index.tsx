@@ -17,6 +17,7 @@ export default defineContentScript({
 			ui = await createShadowRootUi(ctx, {
 				name: "translation-overlay",
 				position: "overlay",
+				zIndex: 2147483647,
 				onMount(container) {
 					root = ReactDOM.createRoot(container);
 					root.render(
