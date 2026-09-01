@@ -33,10 +33,13 @@ export default defineContentScript({
 					root.render(
 						<ChallengeOverlay
 							onDismiss={async () => {
+							try {
 								ui?.remove();
+							} finally {
 								ui = null;
-								await browser.runtime.sendMessage("challenge-dismissed");
-							}}
+							}
+							await browser.runtime.sendMessage("challenge-dismissed");
+						}}
 						/>
 					);
 				},

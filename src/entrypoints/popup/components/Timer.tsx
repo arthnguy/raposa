@@ -95,12 +95,12 @@ export default function Timer({ canChallenge, isEnabled }: { canChallenge: boole
 
 	return (
 		<div className="flex flex-col items-center gap-1">
-		<span className="text-4xl font-mono font-medium tracking-tight">
-			{format(secondsLeft)}
-		</span>
-		<span className="text-xs text-text-secondary uppercase tracking-widest">
-			until next challenge
-		</span>
+			<span className="text-4xl font-mono font-medium tracking-tight">
+				{format(secondsLeft)}
+			</span>
+			<span className="text-xs text-text-secondary uppercase tracking-widest">
+				until next challenge
+			</span>
 		</div>
 	);
 }
