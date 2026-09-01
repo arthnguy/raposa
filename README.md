@@ -9,6 +9,8 @@ A browser extension that periodically quizzes you on language flashcards. Made f
 - Enable/disable timer when you don't want to be interrupted when busy
 - Display difference between your answer and the back of the card
 
+(note that if you are using an Adblocker, the challenges may not pop up as of right now)
+
 ![Options Navigation](/src/assets/options-navigation.gif)
 ![Timer Ticking](/src/assets/timer-ticking.gif)
 ![Answer Challenge](/src/assets/answer-challenge.gif)
